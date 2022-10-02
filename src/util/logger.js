@@ -1,4 +1,4 @@
-function Logger(msg = "", type = "") {
+function Logger(msg = "", type = "", emoji = "") {
   let d = new Date().toLocaleDateString("fr", {
     day: "numeric",
     month: "numeric",
@@ -6,17 +6,17 @@ function Logger(msg = "", type = "") {
     minute: "numeric",
     second: "numeric",
   });
-  console.log(`${d} : [${type}] ${msg}`);
+  console.log(`${d}: ${emoji}  [${type}] ${msg}`);
 }
 
 exports.LogInfo = (msg) => {
-  Logger(msg, "INFO");
+  Logger(msg, "INFO", "💡");
 };
 
 exports.LogWarn = (msg) => {
-  Logger(msg, "WARN");
+  Logger(msg, "WARN", "⚠️");
 };
 
 exports.LogError = (msg) => {
-  Logger(msg, "ERROR");
+  Logger(msg, "ERROR", "❌");
 };
