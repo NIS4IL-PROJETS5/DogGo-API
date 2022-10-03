@@ -8,18 +8,19 @@
 </div>
 
 # DogGo-API
+
 Create an android application to improve the communication of the association while keeping the content of the website.
 
 📅 September 22 - February 23  
 🧑‍🎓 Semester 5  
-🐶 Les Joyeux Cabots  
- 
- [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=NIS4IL-PROJETS5_DogGo-API&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=NIS4IL-PROJETS5_DogGo-API)
+🐶 Les Joyeux Cabots
+
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=NIS4IL-PROJETS5_DogGo-API&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=NIS4IL-PROJETS5_DogGo-API)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=NIS4IL-PROJETS5_DogGo-API&metric=bugs)](https://sonarcloud.io/summary/new_code?id=NIS4IL-PROJETS5_DogGo-API)
- 
- ## 🌳 Architecture
- 
- 📦src  
+
+## 🌳 Architecture
+
+📦src  
  ┣ 📂controllers -> `methods used to handle requests`  
  ┣ 📂middleware -> `rules for the routes`  
  ┣ 📂models -> `schema interactions with the database`  
@@ -27,7 +28,7 @@ Create an android application to improve the communication of the association wh
  ┣ 📂util -> `scripts useful for the app`  
  ┃ ┣ 📜functions.js -> `reduce repetition of the functions`  
  ┣ 📜app.js -> `setup express and connect to the database`  
- ┗ 📜server.js -> `create and start the server`  
+ ┗ 📜server.js -> `create and start the server`
 
 ## ⚙️ Installation
 
@@ -58,11 +59,16 @@ git clone https://github.com/NIS4IL-PROJETS5/DogGo-API.git
 ```
 MONGO_URI=mongodb+srv://<username>:<password>@<clustername>.xxxxx.mongodb.net/DogGo?retryWrites=true&w=majority
 JWT_SECRET=randomized-sequence-of-characters
+MYSQL_ADRESS=localhost
+MYSQL_DATABASE=db_test
+MYSQL_USER=root
+MYSQL_PASSWORD=123
 ```
 
 2. Rename the file `example.env` > `.env`
 
-_Note: Default api port is `3000` you can set a custom one with `PORT` env variable_
+_Note: Default api port is `3000` you can set a custom one with `PORT` env variable_  
+_You can leave the `MYSQL_PASSWORD` empty, if your user has no password_
 
 ##### 🚀 LAUNCH API
 
