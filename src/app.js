@@ -1,37 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const mysql = require("mysql");
 const bodyParser = require("body-parser");
 require("dotenv").config();
-const {
-  MONGO_URI,
-  MYSQL_ADRESS,
-  MYSQL_DATABASE,
-  MYSQL_USER,
-  MYSQL_PASSWORD,
-} = process.env;
+const { MONGO_URI } = process.env;
+var corsOptions = {
+  origin: "http://localhost:4200", // URL of the frontend
+};
 
-const userRoutes = require("./routes/user"); // import the user routes
+const userRoutes = require("./routes/user.routes");
+const actRoutes = require("./routes/actualites.routes");
 
 mongoose
   .connect(
     MONGO_URI,
     { useNewUrlParser: true, useUnifiedTopology: true } // useNewUrlParser ? : https://stackoverflow.com/a/65158413, useUnifiedTopology ? : https://mongoosejs.com/docs/5.x/docs/deprecations.html#useunifiedtopology
   )
-  .then(() => console.log("✅ Connected to MongoDB"))
+  .then(() => console.log("🍀 Connected to MongoDB"))
   .catch(() => console.log("❌ Failed to connect to MongoDB"));
-
-const con = mysql.createConnection({
-  host: MYSQL_ADRESS,
-  user: MYSQL_USER,
-  password: MYSQL_PASSWORD,
-  database: MYSQL_DATABASE,
-});
-
-con.connect(function (err) {
-  if (err) throw err;
-  console.log("✅ Connected to MySQL");
-});
 
 const app = express(); // create a new instance of express
 
@@ -53,6 +38,13 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json()); // parses the json data sent to the server
 
-app.use("/api/auth", userRoutes); // use the user routes
+const db = require("./util/mysql.connect"); // import the database connection
+db.sequelize.sync();
+
+// mysql routes
+app.use("/api/actualites", actRoutes);
+
+// mongo routes
+app.use("/api/auth", userRoutes);
 
 module.exports = app;
