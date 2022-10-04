@@ -3,7 +3,7 @@
  <br/>
  <br/>
   <a href="https://github.com/NIS4IL-PROJETS5/DogGo-API/releases" target="_blank">
-    <img alt="Version" src="https://img.shields.io/badge/version-1.0.2-blue.svg?cacheSeconds=2592000&style=for-the-badge" />
+    <img alt="Version" src="https://img.shields.io/badge/version-1.0.3-blue.svg?cacheSeconds=2592000&style=for-the-badge" />
   </a>
 </div>
 
@@ -23,10 +23,12 @@ Create an android application to improve the communication of the association wh
 📦src  
  ┣ 📂controllers -> `methods used to handle requests`  
  ┣ 📂middleware -> `rules for the routes`  
+ ┃ ┗ 📜auth.js -> `protect requests with unique tokens`  
  ┣ 📂models -> `schema interactions with the database`  
  ┣ 📂routes -> `requests linked to controllers`  
  ┣ 📂util -> `scripts useful for the app`  
  ┃ ┣ 📜functions.js -> `reduce repetition of the functions`  
+ ┃ ┗ 📜mysql.connect.js - > `connection to mysql database`  
  ┣ 📜app.js -> `setup express and connect to the database`  
  ┗ 📜server.js -> `create and start the server`
 
@@ -60,6 +62,7 @@ git clone https://github.com/NIS4IL-PROJETS5/DogGo-API.git
 MONGO_URI=mongodb+srv://<username>:<password>@<clustername>.xxxxx.mongodb.net/DogGo?retryWrites=true&w=majority
 JWT_SECRET=randomized-sequence-of-characters
 MYSQL_ADRESS=localhost
+MYSQL_PORT=3306
 MYSQL_DATABASE=db_test
 MYSQL_USER=root
 MYSQL_PASSWORD=123

@@ -1,10 +1,10 @@
 {
   "name": "doggo-api",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "🧠 NodeJS API DogGo project",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ."
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +15,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.3",
     "mongoose-unique-validator": "^3.1.0",
-    "mysql": "^2.18.1"
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.23.2"
   }
 }
