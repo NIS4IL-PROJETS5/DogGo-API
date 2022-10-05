@@ -14,6 +14,8 @@ module.exports = (req, res, next) => {
     };
     next();
   } catch (error) {
-    res.status(401).json({ error: error });
+    res
+      .status(401)
+      .json({ error: req.headers.authorization ? error : "No token provided" });
   }
 };
