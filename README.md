@@ -3,8 +3,16 @@
  <br/>
  <br/>
   <a href="https://github.com/NIS4IL-PROJETS5/DogGo-API/releases" target="_blank">
-    <img alt="Version" src="https://img.shields.io/badge/version-1.0.3-blue.svg?cacheSeconds=2592000&style=for-the-badge" />
+    <img alt="Version" src="https://img.shields.io/badge/version-1.0.4-blue.svg?cacheSeconds=2592000&style=for-the-badge" />
   </a>
+</div>
+
+<div align="left">
+<label>Documentation:</label>
+</br>
+•<a href="https://github.com/NIS4IL-PROJETS5/DogGo-API/edit/main/README.md#doggo-api"> English</a>
+</br>
+•<a href="https://github.com/NIS4IL-PROJETS5/DogGo-API/edit/main/README.md#doggo-api-fr"> Français</a>
 </div>
 
 # DogGo-API
@@ -82,6 +90,84 @@ npm install
 ```
 
 2. Start
+
+```
+node .
+```
+
+##
+
+# DogGo-API _FR_
+
+Créer une application pour améliorer la communication de l'association tout en gardant le contenu actuel du site.
+
+📅 22 septembre - 23 février  
+🧑‍🎓 Semestre 5  
+🐶 Les Joyeux Cabots
+
+## 🌳 Architecture
+
+📦src
+┣ 📂controllers -> `méthodes utilisées pour gérer les requêtes`
+┣ 📂middleware -> `règles pour les routes`
+┃ ┗ 📜auth.js -> `protéger les requêtes avec des jetons uniques`
+┣ 📂models -> `interactions de schéma avec la base de données`
+┣ 📂routes -> `requêtes liées aux contrôleurs`
+┣ 📂util -> `scripts utiles pour l'application`
+┃ ┣ 📜functions.js -> `réduire la répétition des fonctions`
+┃ ┗ 📜mysql.connect.js - > `connexion à la base de données mysql`
+┣ 📜app.js -> `configuration d'express et connexion à la base de données`
+┗ 📜server.js -> `créer et démarrer le serveur`
+
+## ⚙️ Installation FR
+
+### Prérequis
+
+Node 16.9 ou supérieur
+
+- Cluster MongoDB
+
+1. Créer un [compte](https://account.mongodb.com/account/login)
+2. Créer un cluster
+3. Le connecter avec "connect your application"
+4. Copier votre chaîne de connexion
+5. Remplacer `<username>` & `<password>` avec vos identifiants d'accès à la base de données
+
+### Démarrer l'API
+
+- Cloner le repo
+
+```
+git clone https://github.com/NIS4IL-PROJETS5/DogGo-API.git
+```
+
+##### 🧾 FICHIER ENV
+
+1. Remplacer le contenu de `example.env`
+
+```
+MONGO_URI=mongodb+srv://<username>:<password>@<clustername>.xxxxx.mongodb.net/DogGo?retryWrites=true&w=majority
+JWT_SECRET=randomized-sequence-of-characters
+MYSQL_ADRESS=localhost
+MYSQL_PORT=3306
+MYSQL_DATABASE=db_test
+MYSQL_USER=root
+MYSQL_PASSWORD=123
+```
+
+2. Renommer le fichier `example.env` > `.env`
+
+_Note: Le port par défaut de l'api est `3000` vous pouvez en définir un personnalisé avec la variable d'environnement `PORT`_
+
+##### 🚀 LANCER L'API
+
+1. Installer les dépendances
+
+```
+npm install
+```
+
+2. Démarrer
 
 ```
 node .
