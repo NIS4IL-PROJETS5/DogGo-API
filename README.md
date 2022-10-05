@@ -10,9 +10,9 @@
 <div align="left">
 <label>Documentation:</label>
 </br>
-•<a href="https://github.com/NIS4IL-PROJETS5/DogGo-API/edit/main/README.md#doggo-api"> English</a>
+•<a href="https://github.com/NIS4IL-PROJETS5/DogGo-API#doggo-api"> English</a>
 </br>
-•<a href="https://github.com/NIS4IL-PROJETS5/DogGo-API/edit/main/README.md#doggo-api-fr"> Français</a>
+•<a href="https://github.com/NIS4IL-PROJETS5/DogGo-API#doggo-api-fr"> Français</a>
 </div>
 
 # DogGo-API
@@ -107,17 +107,17 @@ Créer une application pour améliorer la communication de l'association tout en
 
 ## 🌳 Architecture
 
-📦src
-┣ 📂controllers -> `méthodes utilisées pour gérer les requêtes`
-┣ 📂middleware -> `règles pour les routes`
-┃ ┗ 📜auth.js -> `protéger les requêtes avec des jetons uniques`
-┣ 📂models -> `interactions de schéma avec la base de données`
-┣ 📂routes -> `requêtes liées aux contrôleurs`
-┣ 📂util -> `scripts utiles pour l'application`
-┃ ┣ 📜functions.js -> `réduire la répétition des fonctions`
-┃ ┗ 📜mysql.connect.js - > `connexion à la base de données mysql`
-┣ 📜app.js -> `configuration d'express et connexion à la base de données`
-┗ 📜server.js -> `créer et démarrer le serveur`
+📦src  
+┣ 📂controllers -> `méthodes utilisées pour gérer les requêtes`  
+┣ 📂middleware -> `règles pour les routes`  
+┃ ┗ 📜auth.js -> `protéger les requêtes avec des jetons uniques`  
+┣ 📂models -> `interactions de schéma avec la base de données`  
+┣ 📂routes -> `requêtes liées aux contrôleurs`  
+┣ 📂util -> `scripts utiles pour l'application`  
+┃ ┣ 📜functions.js -> `réduire la répétition des fonctions`  
+┃ ┗ 📜mysql.connect.js - > `connexion à la base de données mysql`  
+┣ 📜app.js -> `configuration d'express et connexion à la base de données`  
+┗ 📜server.js -> `créer et démarrer le serveur`  
 
 ## ⚙️ Installation FR
 
