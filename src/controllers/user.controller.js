@@ -12,7 +12,7 @@ Guest: ❎
 Member: ❎
 Admin: ✅
 */
-exports.getUsers = (req, res, next) => {
+exports.getUsers = (req, res) => {
   util.LogInfo(`Getting users`);
   if (req.auth.role !== "admin") {
     res.status(401).json({ error: "Unauthorized" });
@@ -28,7 +28,7 @@ Guest: 👤 Only himself
 Member: 👤 Only himself
 Admin: 👥 Everyone
 */
-exports.getUser = (req, res, next) => {
+exports.getOneUser = (req, res) => {
   util.LogInfo(`Getting user '${req.params.id}'`);
   if (req.auth.userId !== req.params.id && req.auth.role !== "admin") {
     res.status(401).json({ error: "Unauthorized" });
@@ -41,7 +41,7 @@ exports.getUser = (req, res, next) => {
 
 /* Auth check: ❎
  */
-exports.signup = (req, res, next) => {
+exports.signup = (req, res) => {
   util.LogInfo(`Registering user '${req.body.email}'`);
   bcrypt
     .hash(req.body.password, 10)
@@ -61,13 +61,13 @@ exports.signup = (req, res, next) => {
 
 /* Auth check: ❎
  */
-exports.login = (req, res, next) => {
-  util.LogInfo(`Logging in user '${req.body.email}'`);
+exports.login = (req, res) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (user === null) {
         return res.status(401).json({ error: "Email / Password not found" });
       } else {
+        util.LogInfo(`Logging in user '${req.body.email}'`);
         bcrypt
           .compare(req.body.password, user.password) // compare the password sent by the user with the password stored in the database
           .then((valid) => {
@@ -99,13 +99,13 @@ exports.login = (req, res, next) => {
 
 /* Auth check: ❎
  */
-exports.deleteUser = (req, res, next) => {
-  util.LogWarn(`Deleting user '${req.params.id}'`);
+exports.deleteUser = (req, res) => {
   console.log("🚀 ~ exports.deleteUser ~ req.auth.role", req.auth.role);
   if (req.auth.role !== "admin" || req.auth.userId === req.params.id) {
     console.log("oui");
     res.status(401).json({ error: "Unauthorized" });
   } else {
+    util.LogWarn(`Deleting user '${req.params.id}'`);
     User.deleteOne({ _id: req.params.id })
       .then(() => res.status(200).json({ message: "User deleted!" }))
       .catch((error) => res.status(400).json({ error }));
@@ -117,11 +117,11 @@ Guest: 👤 Only himself with no role change
 Member: 👤 Only himself with no role change
 Admin: 👥 Everyone
 */
-exports.updateUser = (req, res, next) => {
-  util.LogInfo(`Updating user '${req.params.id}'`);
+exports.updateUser = (req, res) => {
   if (req.auth.userId !== req.params.id && req.auth.role !== "admin") {
     res.status(401).json({ error: "Unauthorized" });
   } else {
+    util.LogInfo(`Updating user '${req.params.id}'`);
     const userObj = { ...req.body };
     delete userObj._userId;
 
