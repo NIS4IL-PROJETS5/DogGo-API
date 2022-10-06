@@ -10,7 +10,8 @@ const userSchema = mongoose.Schema({
     enum: ["guest", "member", "admin"],
     default: "guest",
   },
-  actualitesIds: [{ type: Array, default: [] }],
+  actIds: [{ type: Array, default: [] }],
+  adhId: { type: Number, default: null },
 });
 
 userSchema.plugin(uniqueValidator); // add the plugin to the schema

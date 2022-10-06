@@ -1,6 +1,6 @@
 const db = require("../util/mysql.connect");
 
-const Actualites = db.actualites;
+const Actualite = db.actualites;
 const User = require("../models/User");
 
 const useUtils = require("../util/functions");
@@ -10,7 +10,7 @@ const util = useUtils();
  */
 exports.getActualites = (req, res) => {
   util.LogInfo(`Getting all actualites`);
-  Actualites.findAll()
+  Actualite.findAll()
     .then((data) => res.status(200).json(data))
     .catch((error) => res.status(500).json({ error }));
 };
@@ -20,7 +20,7 @@ exports.getActualites = (req, res) => {
 exports.getOneActualite = (req, res) => {
   util.LogInfo(`Getting actualite '${req.params.id}'`);
   const id = req.params.id;
-  Actualites.findOne({ where: { actId: id } })
+  Actualite.findOne({ where: { actId: id } })
     .then((data) => res.status(200).json(data))
     .catch((error) => res.status(404).json({ error }));
 };
@@ -49,15 +49,17 @@ exports.createActualite = (req, res) => {
       actDateCachee: req.body.actDateCachee,
       actDesactive: req.body.actDesactive,
     };
-    Actualites.create(act)
+    Actualite.create(act)
       .then((data) => {
         res.status(200).json(data);
 
-        // Add the actualite to the user's actualitesIds
-        User.findOne({ _id: req.auth.userId }).then((user) => {
-          user.actualitesIds.push(data.actId.toString());
-          user.save();
-        });
+        // Add the actualite to the user's actIds
+        User.findOne({ _id: req.auth.userId })
+          .then((user) => {
+            user.actIds.push(data.actId.toString());
+            user.save();
+          })
+          .catch((error) => res.status(404).json({ error }));
       })
       .catch((error) => res.status(500).json({ error }));
   }
@@ -76,14 +78,11 @@ exports.deleteActualite = (req, res) => {
   // Get the user and check if he is the author of the actualite
   User.findOne({ _id: req.auth.userId })
     .then((user) => {
-      if (
-        req.auth.role !== "admin" &&
-        !user.actualitesIds.includes(req.params.id)
-      ) {
+      if (req.auth.role !== "admin" && !user.actIds.includes(req.params.id)) {
         res.status(401).json({ error: "Unauthorized" });
       } else {
         util.LogWarn(`Deleting actualite '${req.params.id}'`);
-        Actualites.destroy({
+        Actualite.destroy({
           where: {
             actId: req.params.id,
           },
@@ -108,16 +107,13 @@ exports.updateActualite = (req, res) => {
   // Get the user and check if he is the author of the actualite
   User.findOne({ _id: req.auth.userId })
     .then((user) => {
-      if (
-        req.auth.role !== "admin" &&
-        !user.actualitesIds.includes(req.params.id)
-      ) {
+      if (req.auth.role !== "admin" && !user.actIds.includes(req.params.id)) {
         res.status(401).json({ error: "Unauthorized" });
       } else {
         util.LogInfo(`Updating actualite '${req.params.id}'`);
         const actuObj = { ...req.body };
 
-        Actualites.update(
+        Actualite.update(
           { ...actuObj },
           {
             where: {
