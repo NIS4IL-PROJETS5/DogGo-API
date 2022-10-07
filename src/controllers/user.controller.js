@@ -46,7 +46,7 @@ exports.signup = (req, res) => {
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
-      delete req.body.actualitesIds; // remove the actualitesIds from the request body
+      delete req.body.actIds; // remove the actIds from the request body
       const user = new User({
         name: req.body.name,
         email: req.body.email,
@@ -123,7 +123,7 @@ exports.updateUser = (req, res) => {
     res.status(401).json({ error: "Unauthorized" });
   } else {
     util.LogInfo(`Updating user '${req.params.id}'`);
-    delete req.body.actualitesIds; // remove the actualitesIds from the request body
+    delete req.body.actIds; // remove the actIds from the request body
     const userObj = { ...req.body };
     delete userObj._userId;
 

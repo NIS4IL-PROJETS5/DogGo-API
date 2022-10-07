@@ -5,7 +5,8 @@ require("dotenv").config();
 const { MONGO_URI } = process.env;
 
 const userRoutes = require("./routes/user.routes");
-const actRoutes = require("./routes/actualites.routes");
+const actRoutes = require("./routes/actualite.routes");
+const adhRoutes = require("./routes/adherent.routes");
 
 mongoose
   .connect(
@@ -40,6 +41,7 @@ db.sequelize.sync();
 
 // mysql routes
 app.use("/api/actualites", actRoutes);
+app.use("/api/adherents", adhRoutes);
 
 // mongo routes
 app.use("/api/auth", userRoutes);

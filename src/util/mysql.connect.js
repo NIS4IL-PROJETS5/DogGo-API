@@ -33,6 +33,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.actualites = require("../models/Actualites")(sequelize, Sequelize);
+db.actualites = require("../models/Actualite")(sequelize, Sequelize);
+db.adherents = require("../models/Adherent")(sequelize, Sequelize);
 
 module.exports = db;

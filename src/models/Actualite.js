@@ -1,21 +1,23 @@
 module.exports = (sequelize, Sequelize) => {
-  const Actualites = sequelize.define(
+  const Actualite = sequelize.define(
     "tblactualites",
     {
       actId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER(11),
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
       actDateDebut: {
         type: Sequelize.DATE,
+        allowNull: false,
       },
       actDateFin: {
         type: Sequelize.DATE,
+        defaultValue: null,
       },
       actTitre: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(100),
         allowNull: false,
       },
       actTexte: {
@@ -23,22 +25,26 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
       },
       actCachee: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.TINYINT(1),
+        allowNull: false,
+        defaultValue: 0,
       },
       actDateCachee: {
         type: Sequelize.DATE,
       },
       actDesactive: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.TINYINT(1),
+        allowNull: false,
       },
       actType: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.TINYINT(3),
         allowNull: false,
+        defaultValue: 2,
       },
     },
     {
       timestamps: false,
     }
   );
-  return Actualites;
+  return Actualite;
 };
