@@ -21,7 +21,7 @@ const app = express(); // create a new instance of express
 app.use(express.json()); // parse the data from the request body
 
 // CORS headers for all routes
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
