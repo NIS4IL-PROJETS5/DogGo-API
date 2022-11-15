@@ -8,10 +8,36 @@ const util = useUtils();
 
 /* Auth check: ❎
  */
-exports.getActualites = (req, res) => {
+exports.getAllActualites = (_req, res) => {
   util.LogInfo(`Getting all actualites`);
   Actualite.findAll()
     .then((data) => res.status(200).json(data))
+    .catch((error) => res.status(500).json({ error }));
+};
+
+/* Auth check: ❎
+ */
+exports.getLimitedActualites = async (req, res) => {
+  util.LogInfo(`Getting limited actualites '${req.params.limit}'`);
+
+  if (isNaN(req.params.limit)) {
+    return res.status(400).json({ error: "Limit must be a number" });
+  }
+
+  let index = [(await Actualite.count()) - parseInt(req.params.limit) * 5]; // get the index of the first actualite
+  for (let i = 1; i < 5; i++) {
+    index.push(index[0] + i); // get the index of the next 4 actualites
+  }
+
+  Actualite.findAll({
+    where: { actId: index },
+    order: [["actId", "DESC"]],
+  })
+    .then((data) =>
+      data.length !== 0
+        ? res.status(200).json(data)
+        : res.status(404).json({ error: "No actualites found" })
+    )
     .catch((error) => res.status(500).json({ error }));
 };
 

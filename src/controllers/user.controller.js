@@ -101,7 +101,6 @@ exports.login = (req, res) => {
 /* Auth check: ❎
  */
 exports.deleteUser = (req, res) => {
-  console.log("🚀 ~ exports.deleteUser ~ req.auth.role", req.auth.role);
   if (req.auth.role !== "admin" || req.auth.userId === req.params.id) {
     console.log("oui");
     res.status(401).json({ error: "Unauthorized" });
