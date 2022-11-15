@@ -48,11 +48,35 @@ exports.createContact = (req, res) => {
     res.status(401).json({ error: "Unauthorized" });
   }
 
-  util.LogInfo(`Creating contact`);
-  const contact = {
-    ...req.body,
+  const sendTo = {
+    1: "contact@joyeuxcabots.fr",
+    2: "moniteurs@joyeuxcabots.fr",
+    3: "webmaster@joyeuxcabots.fr",
   };
-  Contact.create(contact)
-    .then((data) => res.status(201).json(data))
-    .catch((error) => res.status(500).json({ error }));
+
+  if (sendTo[req.body.conDestinataire] === undefined) {
+    return res.status(400).json({ error: "Invalid destinataire" });
+  }
+
+  let contact = {
+    ...req.body,
+    conDestinataire: sendTo[req.body.conDestinataire],
+  };
+
+  User.findOne({ _id: req.auth.userId })
+    .then((user) => {
+      if (user) {
+        contact = {
+          ...contact,
+          conIdentite: user.name,
+          conMail: user.email,
+          conTelephone: user.phone,
+        };
+      }
+      util.LogInfo(`Creating new contact`);
+      Contact.create(contact)
+        .then((data) => res.status(201).json(data))
+        .catch((error) => res.status(500).json({ error }));
+    })
+    .catch((error) => res.status(404).json({ error }));
 };
