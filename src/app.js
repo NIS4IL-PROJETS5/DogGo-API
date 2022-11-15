@@ -4,10 +4,6 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 const { MONGO_URI } = process.env;
 
-const userRoutes = require("./routes/user.routes");
-const actRoutes = require("./routes/actualite.routes");
-const adhRoutes = require("./routes/adherent.routes");
-
 mongoose
   .connect(
     MONGO_URI,
@@ -40,10 +36,11 @@ const db = require("./util/mysql.connect"); // import the database connection
 db.sequelize.sync();
 
 // mysql routes
-app.use("/api/actualites", actRoutes);
-app.use("/api/adherents", adhRoutes);
+app.use("/api/actualites", require("./routes/actualite.routes"));
+app.use("/api/adherents", require("./routes/adherent.routes"));
+app.use("/api/contacts", require("./routes/contact.routes"));
 
 // mongo routes
-app.use("/api/auth", userRoutes);
+app.use("/api/auth", require("./routes/user.routes"));
 
 module.exports = app;

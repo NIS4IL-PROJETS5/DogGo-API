@@ -35,5 +35,6 @@ db.sequelize = sequelize;
 
 db.actualites = require("../models/Actualite")(sequelize, Sequelize);
 db.adherents = require("../models/Adherent")(sequelize, Sequelize);
+db.contacts = require("../models/Contact")(sequelize, Sequelize);
 
 module.exports = db;

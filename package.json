@@ -1,6 +1,6 @@
 {
   "name": "doggo-api",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "🧠 NodeJS API DogGo project",
   "main": "src/server.js",
   "scripts": {
