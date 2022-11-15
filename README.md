@@ -3,7 +3,7 @@
  <br/>
  <br/>
   <a href="https://github.com/NIS4IL-PROJETS5/DogGo-API/releases" target="_blank">
-    <img alt="Version" src="https://img.shields.io/badge/version-1.0.5-blue.svg?cacheSeconds=2592000&style=for-the-badge" />
+    <img alt="Version" src="https://img.shields.io/badge/version-1.0.7-blue.svg?cacheSeconds=2592000&style=for-the-badge" />
   </a>
 </div>
 
