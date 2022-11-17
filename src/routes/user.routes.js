@@ -10,4 +10,6 @@ router.post("/login", userCtrl.login);
 router.delete("/delete/:id", auth, userCtrl.deleteUser);
 router.put("/update/:id", auth, userCtrl.updateUser);
 
+router.get("/check", auth, userCtrl.checkAuth);
+
 module.exports = router;

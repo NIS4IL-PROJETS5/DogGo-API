@@ -147,3 +147,10 @@ exports.updateUser = (req, res) => {
       .catch((error) => res.status(404).json({ error }));
   }
 };
+
+exports.checkAuth = (req, res) => {
+  util.LogInfo(`Checking auth for user '${req.auth.userId}'`);
+  res.status(200).json({
+    ...req.auth,
+  });
+};
