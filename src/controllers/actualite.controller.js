@@ -33,11 +33,16 @@ exports.getLimitedActualites = async (req, res) => {
     where: { actId: index },
     order: [["actId", "DESC"]],
   })
-    .then((data) =>
-      data.length !== 0
-        ? res.status(200).json(data)
-        : res.status(404).json({ error: "No actualites found" })
-    )
+    .then((data) => {
+      if (data.length === 0) {
+        return res.status(404).json({ error: "No actualites found" });
+      }
+      data.forEach((act) => {
+        act.actCachee = act.actCachee === 1 ? true : false;
+        act.actDesactive = act.actDesactive === 1 ? true : false;
+      });
+      res.status(200).json(data);
+    })
     .catch((error) => res.status(500).json({ error }));
 };
 
