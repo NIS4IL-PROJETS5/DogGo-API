@@ -1,6 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const path = require("path");
 const bodyParser = require("body-parser");
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("../swagger_output.json");
 require("dotenv").config();
 const { MONGO_URI } = process.env;
 
@@ -35,6 +38,9 @@ app.use(bodyParser.json()); // parses the json data sent to the server
 const db = require("./util/mysql.connect"); // import the database connection
 db.sequelize.sync();
 
+app.use("/images", express.static(path.join(__dirname, "images"))); // serve the images folder statically
+app.use("/documents", express.static(path.join(__dirname, "documents"))); // serve the documents folder statically
+
 // mysql routes
 app.use("/api/actualites", require("./routes/actualite.routes"));
 app.use("/api/adherents", require("./routes/adherent.routes"));
@@ -43,5 +49,9 @@ app.use("/api/contacts", require("./routes/contact.routes"));
 // mongo routes
 app.use("/api/auth", require("./routes/user.routes"));
 app.use("/api/dogs", require("./routes/dog.routes"));
+app.use("/api/docs", require("./routes/doc.routes"));
+
+// swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 module.exports = app;
