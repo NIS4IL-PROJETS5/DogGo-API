@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema({
     enum: ["guest", "member", "admin"],
     default: "guest",
   },
+  phone: { type: String, required: false },
   actIds: [{ type: Array, default: [] }],
   adhId: { type: Number, default: null },
 });
