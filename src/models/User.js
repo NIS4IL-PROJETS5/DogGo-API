@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema({
     default: "guest",
   },
   phone: { type: String, required: false },
+  imageUrl: { type: String, required: false },
   dogIds: [{ type: Array, default: [] }],
   actIds: [{ type: Array, default: [] }],
   adhId: { type: Number, default: null },

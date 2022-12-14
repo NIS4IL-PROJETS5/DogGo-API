@@ -1,10 +1,11 @@
 {
   "name": "doggo-api",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "🧠 NodeJS API DogGo project",
   "main": "src/server.js",
   "scripts": {
-    "start": "nodemon ."
+    "start": "nodemon .",
+    "swagger": "node src/util/swagger.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +16,10 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.3",
     "mongoose-unique-validator": "^3.1.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^2.3.3",
-    "sequelize": "^6.23.2"
+    "sequelize": "^6.23.2",
+    "swagger-autogen": "^2.22.0",
+    "swagger-ui-express": "^4.6.0"
   }
 }

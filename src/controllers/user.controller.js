@@ -48,8 +48,7 @@ exports.signup = (req, res) => {
     .then((hash) => {
       delete req.body.actIds; // remove the actIds from the request body
       const user = new User({
-        name: req.body.name,
-        email: req.body.email,
+        ...req.body,
         password: hash,
       });
       user
@@ -123,8 +122,6 @@ exports.updateUser = (req, res) => {
   } else {
     util.LogInfo(`Updating user '${req.params.id}'`);
     delete req.body.actIds; // remove the actIds from the request body
-    const userObj = { ...req.body };
-    delete userObj._userId;
 
     User.findOne({ _id: req.params.id })
       .then((user) => {
@@ -136,9 +133,19 @@ exports.updateUser = (req, res) => {
         ) {
           res.status(401).json({ error: "Unauthorized" });
         } else {
+          let userObj = { ...req.body };
+          delete userObj._userId;
+          if (req.file) {
+            userObj.imageUrl = `${req.protocol}://${req.get("host")}/images/${
+              req.file.filename
+            }`;
+          }
+
           User.updateOne(
             { _id: req.params.id },
-            { ...userObj, _id: req.params.id }
+            {
+              ...userObj,
+            }
           )
             .then(() => res.status(200).json({ message: "User updated!" }))
             .catch((error) => res.status(400).json({ error }));
