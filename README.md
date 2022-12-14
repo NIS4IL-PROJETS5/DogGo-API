@@ -21,22 +21,22 @@ Create an android application to improve the communication of the association wh
 ## 🌳 Architecture
 
 📦src  
- ┣ 📂controllers -> `methods used to handle requests`  
- ┣ 📂middleware -> `rules for the routes`  
- ┃ ┣ 📜multer-\*.js -> `upload files`
-┃ ┗ 📜auth.js -> `protect requests with unique tokens`
+┣ 📂controllers -> `methods used to handle requests`    
+┣ 📂middleware -> `rules for the routes`    
+┃ ┣ 📜multer-\*.js -> `upload files`  
+┃ ┗ 📜auth.js -> `protect requests with unique tokens`  
 ┣ 📂models -> `schema interactions with the database`  
- ┣ 📂routes -> `requests linked to controllers`  
- ┣ 📂util -> `scripts useful for the app`  
- ┃ ┣ 📜functions.js -> `reduce repetition of the functions`  
- ┃ ┣ 📜swagger.js -> `generate swagger documentation`
-┃ ┣ 📜logger.js -> `log requests`
+┣ 📂routes -> `requests linked to controllers`  
+┣ 📂util -> `scripts useful for the app`  
+┃ ┣ 📜functions.js -> `reduce repetition of the functions`  
+┃ ┣ 📜swagger.js -> `generate swagger documentation`  
+┃ ┣ 📜logger.js -> `log requests`  
 ┃ ┗ 📜mysql.connect.js - > `connection to mysql database`  
- ┣ 📂documents -> `docs files`
-┣ 📂images -> `images files`
+┣ 📂documents -> `docs files`  
+┣ 📂images -> `images files`  
 ┣ 📜app.js -> `setup express and connect to the database`  
- ┣ 📜swagger_output.json -> `swagger documentation`
-┗ 📜server.js -> `create and start the server`
+┣ 📜swagger_output.json -> `swagger documentation`  
+┗ 📜server.js -> `create and start the server`  
 
 #### 📬 Requests
 
