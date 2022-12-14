@@ -42,5 +42,6 @@ app.use("/api/contacts", require("./routes/contact.routes"));
 
 // mongo routes
 app.use("/api/auth", require("./routes/user.routes"));
+app.use("/api/dogs", require("./routes/dog.routes"));
 
 module.exports = app;

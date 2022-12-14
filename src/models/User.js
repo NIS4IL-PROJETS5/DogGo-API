@@ -4,6 +4,7 @@ const uniqueValidator = require("mongoose-unique-validator"); // to validate tha
 const userSchema = mongoose.Schema({
   email: { type: String, required: true, unique: true },
   name: { type: String, required: true },
+  surname: { type: String, required: true },
   password: { type: String, required: true },
   role: {
     type: String,
@@ -11,6 +12,7 @@ const userSchema = mongoose.Schema({
     default: "guest",
   },
   phone: { type: String, required: false },
+  dogIds: [{ type: Array, default: [] }],
   actIds: [{ type: Array, default: [] }],
   adhId: { type: Number, default: null },
 });
