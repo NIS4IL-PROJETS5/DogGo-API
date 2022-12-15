@@ -15,9 +15,7 @@ exports.getOneDocument = (req, res) => {
 
   util.LogInfo(`Getting document '${req.params.id}'`);
   Document.findOne({ _id: req.params.id })
-    .then((document) => {
-      return res.status(200).json(document);
-    })
+    .then((document) => res.status(200).json(document))
     .catch((error) => res.status(404).json({ error }));
 };
 
@@ -27,13 +25,17 @@ Member: ✅ own document
 Admin: ✅
 */
 exports.deleteDocument = (req, res) => {
-  if (req.auth.userId !== document.userId && req.auth.role !== "admin")
-    return res.status(401).json({ error: "Unauthorized" });
+  Document.findOne({ _id: req.params.id })
+    .then((document) => {
+      if (req.auth.userId !== document.userId && req.auth.role !== "admin")
+        return res.status(401).json({ error: "Unauthorized" });
 
-  util.LogInfo(`Deleting document '${req.params.id}'`);
-  Document.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Document deleted!" }))
-    .catch((error) => res.status(400).json({ error }));
+      util.LogInfo(`Deleting document '${req.params.id}'`);
+      Document.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: "Document deleted!" }))
+        .catch((error) => res.status(400).json({ error }));
+    })
+    .catch((error) => res.status(404).json({ error }));
 };
 
 /* Auth check:
@@ -52,9 +54,9 @@ exports.createDocument = (req, res) => {
   const document = new Document({
     ...req.body,
     userId: req.auth.userId,
-    docUrl: `${req.protocol}://${req.get("host")}/documents/${
-      req.file.filename
-    }`,
+    docUrls: [
+      `${req.protocol}://${req.get("host")}/documents/${req.file.filename}`,
+    ],
   });
   document
     .save()
@@ -68,28 +70,32 @@ Member: ✅ own document
 Admin: ✅
 */
 exports.updateDocument = (req, res) => {
-  if (
-    req.auth.role === "guest" ||
-    (req.auth.userId !== document.userId && req.auth.role !== "admin")
-  ) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  Document.findOne({ _id: req.params.id })
+    .then((document) => {
+      if (
+        req.auth.role === "guest" ||
+        (req.auth.userId !== document.userId && req.auth.role !== "admin")
+      ) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
 
-  util.LogInfo(`Updating document '${req.params.id}'`);
-  let docObject = { ...req.body, userId: req.auth.userId };
-  if (req.file) {
-    docObject.docUrl = `${req.protocol}://${req.get("host")}/documents/${
-      req.file.filename
-    }`;
-  }
-  Document.updateOne(
-    { _id: req.params.id },
-    {
-      ...docObject,
-    }
-  )
-    .then(() => res.status(200).json({ message: "Document updated!" }))
-    .catch((error) => res.status(400).json({ error }));
+      util.LogInfo(`Updating document '${req.params.id}'`);
+      let docObject = { ...req.body, userId: req.auth.userId };
+      if (req.file) {
+        docObject.docUrls = document.docUrls.push(
+          `${req.protocol}://${req.get("host")}/documents/${req.file.filename}`
+        );
+      }
+      Document.updateOne(
+        { _id: req.params.id },
+        {
+          ...docObject,
+        }
+      )
+        .then(() => res.status(200).json({ message: "Document updated!" }))
+        .catch((error) => res.status(400).json({ error }));
+    })
+    .catch((error) => res.status(404).json({ error }));
 };
 
 /* Auth check:
@@ -120,7 +126,7 @@ exports.createRequiredDoc = (req, res) => {
   const requiredDoc = new RequiredDocs({
     ...req.body,
     userId: req.auth.userId,
-    docUrl: `${req.protocol}://${req.get("host")}/documents/${
+    reqDocUrl: `${req.protocol}://${req.get("host")}/documents/${
       req.file.filename
     }`,
   });
@@ -142,7 +148,7 @@ exports.updateRequiredDoc = (req, res) => {
   util.LogInfo("Updating required document");
   let docObject = { ...req.body, userId: req.auth.userId };
   if (req.file) {
-    docObject.docUrl = `${req.protocol}://${req.get("host")}/documents/${
+    docObject.reqDocUrl = `${req.protocol}://${req.get("host")}/documents/${
       req.file.filename
     }`;
     RequiredDocs.updateOne(
@@ -169,5 +175,35 @@ exports.deleteRequiredDoc = (req, res) => {
     return res.status(401).json({ error: "Unauthorized" });
   RequiredDocs.deleteOne({ _id: req.params.id })
     .then(() => res.status(200).json({ message: "Required document deleted!" }))
+    .catch((error) => res.status(400).json({ error }));
+};
+
+/* Auth check:
+Guest: ❎
+Member: ✅ own documents
+Admin: ❎ not implemented
+*/
+exports.getAllUserDocs = (req, res) => {
+  if (req.auth.role === "guest")
+    return res.status(401).json({ error: "Unauthorized" });
+
+  util.LogInfo(`Getting all documents for user '${req.auth.userId}'`);
+
+  Document.find({ userId: req.auth.userId })
+    .then(async (documents) => {
+      let resObj = [];
+      let promises = documents.map(async (doc) => {
+        const requiredDoc = await RequiredDocs.findOne({ _id: doc.docId });
+        resObj.push({
+          docId: doc.docId,
+          title: requiredDoc.title,
+          description: requiredDoc.description,
+          docUrls: doc.docUrls,
+          status: doc.status,
+        });
+      });
+      await Promise.all(promises);
+      return res.status(200).json(resObj);
+    })
     .catch((error) => res.status(400).json({ error }));
 };
