@@ -217,7 +217,7 @@ exports.getUncompleteUserDocs = (req, res) => {
   if (req.auth.role === "guest")
     return res.status(401).json({ error: "Unauthorized" });
 
-  util.LogInfo(`Getting all documents for user '${req.auth.userId}'`);
+  util.LogInfo(`Getting all incomplete documents for user '${req.auth.userId}'`);
 
   RequiredDocs.find()
     .then(async (requiredDocs) => {
