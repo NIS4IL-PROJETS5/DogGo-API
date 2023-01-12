@@ -195,9 +195,12 @@ exports.getAllUserDocs = (req, res) => {
       let promises = documents.map(async (doc) => {
         const requiredDoc = await RequiredDocs.findOne({ _id: doc.docId });
         resObj.push({
-          docId: doc.docId,
-          title: requiredDoc.title,
-          description: requiredDoc.description,
+          docId: doc._id,
+          reqDoc: {
+            docId: requiredDoc._id,
+            title: requiredDoc.title,
+            description: requiredDoc.description,
+          },
           docUrls: doc.docUrls,
           status: doc.status,
         });
@@ -231,6 +234,48 @@ exports.getUncompleteUserDocs = (req, res) => {
             description: reqDoc.description,
             reqDocUrl: reqDoc.reqDocUrl,
             status: document ? document.status : "0",
+            rejectionReason: document.status == "rejected" ? document.rejectionReason : ""
+          });
+        }
+      });
+      await Promise.all(promises);
+      return res.status(200).json(resObj);
+    })
+    .catch((error) => res.status(400).json({ error }));
+};
+
+/* Auth check:
+Guest: ❎
+Member: ✅ own documents
+Admin: ❎ not implemented
+*/
+exports.getUserDocsSentOrNot = (req, res) => {
+  if (req.auth.role === "guest")
+    return res.status(401).json({ error: "Unauthorized" });
+
+  util.LogInfo(`Getting all documents (sent and not sent) regarding user '${req.auth.userId}'`);
+
+  RequiredDocs.find()
+    .then(async (requiredDocs) => {
+      let resObj = [];
+      let promises = requiredDocs.map(async (reqDoc) => {
+        const document = await Document.findOne({userId: req.auth.userId, docId: reqDoc._id});
+        if (!document){
+          resObj.push({
+            docId: reqDoc._id,
+            title: reqDoc.title,
+            description: reqDoc.description,
+            reqDocUrl: reqDoc.reqDocUrl,
+            status: "0"
+          });
+        } else {
+          resObj.push({
+            docId: document._id,
+            title: reqDoc.title,
+            description: reqDoc.description,
+            reqDocUrls: document.docUrls,
+            status: document.status,
+            rejectionReason: document.status == "rejected" ? document.rejectionReason : ""
           });
         }
       });
