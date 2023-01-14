@@ -18,5 +18,7 @@ router.get("/reqDoc/user/incomplete", auth, docCtrl.getUncompleteUserDocs);
 router.get("/reqDoc/user/sentornot", auth, docCtrl.getUserDocsSentOrNot);
 
 router.get("/userDocs", auth, docCtrl.getAllUserDocs);
+router.get("/userDocs/admin/all", auth, docCtrl.getAllUserDocsForAdmin);
+router.get("/userDocs/admin/:id", auth, docCtrl.getUserDocsForAdmin);
 
 module.exports = router;

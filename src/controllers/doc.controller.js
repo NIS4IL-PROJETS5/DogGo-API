@@ -211,6 +211,75 @@ exports.getAllUserDocs = (req, res) => {
     .catch((error) => res.status(400).json({ error }));
 };
 
+
+/* Auth check:
+Guest: ❎
+Member: ❎
+Admin: ✅
+*/
+exports.getUserDocsForAdmin = (req, res) => {
+  if (req.auth.role !== "admin"){
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  util.LogInfo(`Getting all documents for user '${req.params.id}'`);
+
+  Document.find({ userId: req.params.id })
+    .then(async (documents) => {
+      let resObj = [];
+      let promises = documents.map(async (doc) => {
+        const requiredDoc = await RequiredDocs.findOne({ _id: doc.docId });
+        resObj.push({
+          docId: doc._id,
+          reqDoc: {
+            docId: requiredDoc._id,
+            title: requiredDoc.title,
+            description: requiredDoc.description,
+          },
+          docUrls: doc.docUrls,
+          status: doc.status,
+        });
+    })
+    await Promise.all(promises);
+    return res.status(200).json(resObj);
+  })
+  .catch((error) => res.status(400).json({ error }));   
+};
+
+/* Auth check:
+Guest: ❎
+Member: ❎
+Admin: ✅
+*/
+exports.getAllUserDocsForAdmin = (req, res) => {
+  if (req.auth.role !== "admin"){
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  util.LogInfo(`Getting all documents for every user`);
+
+  Document.find()
+    .then(async (documents) => {
+      let resObj = [];
+      let promises = documents.map(async (doc) => {
+        const requiredDoc = await RequiredDocs.findOne({ _id: doc.docId });
+        resObj.push({
+          docId: doc._id,
+          reqDoc: {
+            docId: requiredDoc._id,
+            title: requiredDoc.title,
+            description: requiredDoc.description,
+          },
+          docUrls: doc.docUrls,
+          status: doc.status,
+        });
+    })
+    await Promise.all(promises);
+    return res.status(200).json(resObj);
+  })
+  .catch((error) => res.status(400).json({ error }));   
+};
+
 /* Auth check:
 Guest: ❎
 Member: ✅ own documents
