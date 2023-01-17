@@ -1,5 +1,6 @@
 const useUtils = require("../util/functions");
 const util = useUtils();
+const fs = require("fs");
 
 const Document = require("../models/Document");
 const RequiredDocs = require("../models/RequiredDocs");
@@ -10,12 +11,14 @@ Member: ✅ own document
 Admin: ✅
 */
 exports.getOneDocument = (req, res) => {
-  if (req.auth.userId !== document.userId && req.auth.role !== "admin")
-    return res.status(401).json({ error: "Unauthorized" });
-
   util.LogInfo(`Getting document '${req.params.id}'`);
   Document.findOne({ _id: req.params.id })
-    .then((document) => res.status(200).json(document))
+    .then((document) => {
+      if (req.auth.userId !== document.userId || req.auth.role !== "admin")
+      return res.status(401).json({ error: "Unauthorized" });
+      res.status(200).json(document)
+    
+    })
     .catch((error) => res.status(404).json({ error }));
 };
 
@@ -27,10 +30,18 @@ Admin: ✅
 exports.deleteDocument = (req, res) => {
   Document.findOne({ _id: req.params.id })
     .then((document) => {
-      if (req.auth.userId !== document.userId && req.auth.role !== "admin")
+      if (req.auth.userId !== document.userId || req.auth.role !== "admin")
         return res.status(401).json({ error: "Unauthorized" });
 
       util.LogInfo(`Deleting document '${req.params.id}'`);
+
+      document.docUrls.forEach(url => {
+        util.LogInfo(`Deleting file '${url}'`);
+        fs.unlink(url, err => {
+          if(err) util.LogError(err);
+        });        
+      });
+
       Document.deleteOne({ _id: req.params.id })
         .then(() => res.status(200).json({ message: "Document deleted!" }))
         .catch((error) => res.status(400).json({ error }));
@@ -47,6 +58,11 @@ exports.createDocument = (req, res) => {
   if (req.auth.role === "guest")
     return res.status(401).json({ error: "Unauthorized" });
   if (!req.file) return res.status(400).json({ error: "No file provided" });
+  document1 = Document.findOne({docId: req.body.docId, userId: req.auth.userId})
+  .then((document1) => {
+    if(document1)
+      return res.status(400).json({ error: "Document already exists" , document:document1});
+
 
   util.LogInfo(
     `Creating document '${req.body.docId}' for user '${req.auth.userId}'`
@@ -62,7 +78,89 @@ exports.createDocument = (req, res) => {
     .save()
     .then(() => res.status(201).json({ message: "Document created!" }))
     .catch((error) => res.status(400).json({ error }));
+  });
 };
+
+exports.downloadFile = (req, res) => {
+  if (req.query.filename === undefined)
+    return res.status(400).json({ error: "No filename provided" });
+
+  let filenameArray = req.query.filename.replaceAll("/","\\").split("\\");
+  let filename = "src\\documents\\" + filenameArray[filenameArray.length - 1];
+
+  util.LogInfo(`Downloading file '${req.query.filename}'`);
+  res.download(filename);
+}
+
+/* Auth check:
+Guest: ❎
+Member: ✅ own document
+Admin: ✅
+*/
+exports.addFileToDocument = (req, res) => {
+  if (req.auth.role === "guest")
+    return res.status(401).json({ error: "Unauthorized" });
+  if (!req.file) return res.status(400).json({ error: "No file provided" });
+
+  util.LogInfo(
+    `Adding file to document '${req.params.id}' for user '${req.auth.userId}'`
+  );
+
+  Document.findOne({_id: req.params.id, userId: req.auth.userId})
+    .then((document) => {
+      if (req.auth.userId !== document.userId || req.auth.role !== "admin")
+        return res.status(401).json({ error: "Unauthorized" });
+
+      document.docUrls.push(
+        `${req.protocol}://${req.get("host")}/documents/${req.file.filename}`
+      )
+
+      console.log(document)
+
+      document.save()
+        .then(() => res.status(200).json({ message: "File added!" }))
+        .catch((error) => res.status(400).json({ error }));
+    })
+    .catch((error) => res.status(404).json({ error }));
+}
+
+/* Auth check:
+Guest: ❎
+Member: ✅ own document
+Admin: ✅
+*/
+exports.removeFileFromDocument = (req, res) => {
+  if (req.auth.role === "guest")
+    return res.status(401).json({ error: "Unauthorized" });
+
+  console.log(req)
+  
+  if (!req.body.filename) return res.status(400).json({ error: "No filename provided" });
+
+  util.LogInfo(
+    `Removing file '${req.body.filename}' from document '${req.params.id}'`
+  );
+
+  Document.findOne({_id: req.params.id})
+    .then((document) => {
+      if (req.auth.userId !== document.userId || req.auth.role !== "admin")
+        return res.status(401).json({ error: "Unauthorized" });
+
+      let filenameArray = req.body.filename.replaceAll("/","\\").split("\\");
+      let filename = "src\\documents\\" + filenameArray[filenameArray.length - 1];
+
+      fs.unlink(filename , err => {
+        if(err) res.status(400).json({ error: "File doesnt exist" });
+      });
+      document.docUrls.pull(req.body.filename);
+
+      document.save()
+        .then(() => res.status(200).json({ message: "File removed!" }))
+        .catch((error) => res.status(400).json({ error }));
+    })
+    .catch((error) => res.status(404).json({ error }));
+  
+}
 
 /* Auth check:
 Guest: ❎
@@ -74,7 +172,7 @@ exports.updateDocument = (req, res) => {
     .then((document) => {
       if (
         req.auth.role === "guest" ||
-        (req.auth.userId !== document.userId && req.auth.role !== "admin")
+        (req.auth.userId !== document.userId || req.auth.role !== "admin")
       ) {
         return res.status(401).json({ error: "Unauthorized" });
       }

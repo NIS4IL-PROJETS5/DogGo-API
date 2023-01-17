@@ -5,8 +5,11 @@ const docCtrl = require("../controllers/doc.controller");
 const { file } = require("../middleware/multer");
 const { route } = require("./actualite.routes");
 
-router.get("/doc/:id", auth, docCtrl.getOneDocument);
+router.get("/doc/get/:id", auth, docCtrl.getOneDocument);
 router.post("/doc/create", auth, file, docCtrl.createDocument);
+router.get("/doc/download/", docCtrl.downloadFile)
+router.put("/doc/add/:id", auth, file, docCtrl.addFileToDocument);
+router.delete("/doc/remove/:id", auth, docCtrl.removeFileFromDocument)
 router.put("/doc/update/:id", auth, docCtrl.updateDocument);
 router.delete("/doc/delete/:id", auth, docCtrl.deleteDocument);
 
