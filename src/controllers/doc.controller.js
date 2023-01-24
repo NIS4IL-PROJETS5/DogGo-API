@@ -64,8 +64,11 @@ exports.deleteDocument = (req, res) => {
       util.LogInfo(`Deleting document '${req.params.id}'`);
 
       document.docUrls.forEach(url => {
-        util.LogInfo(`Deleting file '${url}'`);
-        fs.unlink(url, err => {
+        let filenameArray = url.replaceAll("/","\\").split("\\");
+        let filename = "src\\documents\\" + filenameArray[filenameArray.length - 1];
+
+        util.LogInfo(`Deleting file '${filename}'`);
+        fs.unlink(filename, err => {
           if(err) util.LogError(err);
         });        
       });
@@ -218,7 +221,11 @@ exports.updateDocument = (req, res) => {
           ...docObject,
         }
       )
-        .then(() => res.status(200).json({ message: "Document updated!" }))
+        .then(() => {
+          Document.findOne({ _id: req.params.id })
+            .then((document) => res.status(200).json(document))
+            .catch((error) => res.status(400).json({ error }));
+        })
         .catch((error) => res.status(400).json({ error }));
     })
     .catch((error) => res.status(404).json({ error }));
@@ -244,21 +251,22 @@ Member: ❎
 Admin: ✅
 */
 exports.createRequiredDoc = (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No file provided" });
+  //if (!req.file) return res.status(400).json({ error: "No file provided" });
   if (req.auth.role !== "admin")
     return res.status(401).json({ error: "Unauthorized" });
 
   util.LogInfo("Creating required document");
   const requiredDoc = new RequiredDocs({
     ...req.body,
-    userId: req.auth.userId,
+    /*
     reqDocUrl: `${req.protocol}://${req.get("host")}/documents/${
       req.file.filename
     }`,
+    */
   });
   requiredDoc
     .save()
-    .then(() => res.status(201).json({ message: "Required document created!" }))
+    .then(() => res.status(201).json(requiredDoc))
     .catch((error) => res.status(400).json({ error }));
 };
 
@@ -273,10 +281,6 @@ exports.updateRequiredDoc = (req, res) => {
 
   util.LogInfo("Updating required document");
   let docObject = { ...req.body, userId: req.auth.userId };
-  if (req.file) {
-    docObject.reqDocUrl = `${req.protocol}://${req.get("host")}/documents/${
-      req.file.filename
-    }`;
     RequiredDocs.updateOne(
       { _id: req.params.id },
       {
@@ -284,10 +288,9 @@ exports.updateRequiredDoc = (req, res) => {
       }
     )
       .then(() =>
-        res.status(200).json({ message: "Required document updated!" })
+        res.status(200).json(docObject)
       )
       .catch((error) => res.status(400).json({ error }));
-  }
 };
 
 /* Auth check:
@@ -299,9 +302,27 @@ exports.deleteRequiredDoc = (req, res) => {
   util.LogInfo("Deleting required document");
   if (req.auth.role !== "admin")
     return res.status(401).json({ error: "Unauthorized" });
-  RequiredDocs.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: "Required document deleted!" }))
-    .catch((error) => res.status(400).json({ error }));
+  
+  Document.find({ docId: req.params.id }).then((documents) => {
+    documents.forEach((document) => {
+      if(document.docId == req.params.id){
+        util.LogInfo(`Deleting document '${document._id}'`);
+        document.docUrls.forEach((url) => {
+          let filenameArray = url.replaceAll("/","\\").split("\\");
+          let filename = "src\\documents\\" + filenameArray[filenameArray.length - 1];
+  
+          fs.unlink(filename, err => {
+            if(err) util.LogError(err);
+          });
+        });
+      }
+    });
+  }).then(() => Document.deleteMany({ docId: req.params.id }).then(() => {
+    RequiredDocs.deleteOne({ _id: req.params.id })
+      .then(() => res.status(200).json({ message: "Required document deleted!" }))
+      .catch((error) => res.status(400).json({ error }));
+  }))
+  .catch((error) => res.status(400).json({ error }));
 };
 
 /* Auth check:

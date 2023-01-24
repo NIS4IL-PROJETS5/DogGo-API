@@ -15,7 +15,7 @@ router.put("/doc/update/:id", auth, docCtrl.updateDocument);
 router.delete("/doc/delete/:id", auth, docCtrl.deleteDocument);
 
 router.get("/reqDocs", auth, docCtrl.getAllRequiredDocs);
-router.post("/reqDoc/create", auth, file, docCtrl.createRequiredDoc);
+router.post("/reqDoc/create", auth, docCtrl.createRequiredDoc);
 router.put("/reqDoc/update/:id", auth, docCtrl.updateRequiredDoc);
 router.delete("/reqDoc/delete/:id", auth, docCtrl.deleteRequiredDoc);
 router.get("/reqDoc/user/incomplete", auth, docCtrl.getUncompleteUserDocs);
