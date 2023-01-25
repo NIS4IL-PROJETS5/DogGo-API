@@ -57,6 +57,15 @@ Node 16.9 or higher
 4. Copy your connection string
 5. Replace `<username>` & `<password>` with your database access user credentials
 
+- Firebase project
+
+If you do not yet have a firebase project :
+1. Create a [google account](https://developers.google.com/?hl=fr)
+2. Create a [firebase project](https://console.firebase.google.com/)
+3. Activate cloud messaging in the project settings (IMPORTANT : Set it as both V1 and legacy versions)
+4. Add the android application to the project (follow firebase's instructions)
+5. Retrieve the firebase admin sdk secret key and put it at the root of the project
+
 ### Start using the API
 
 - Clone the repo
@@ -77,6 +86,8 @@ MYSQL_PORT=3306
 MYSQL_DATABASE=db_test
 MYSQL_USER=root
 MYSQL_PASSWORD=123
+MYSQL_ACTUALITIES_TABLE=table_containing_current_actualities
+FIREBASE_SECRET_URL=path_to_the_firebase_admin_sdk_secret_key
 ```
 
 2. Rename the file `example.env` > `.env`
