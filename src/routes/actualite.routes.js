@@ -4,7 +4,7 @@ const auth = require("../middleware/auth");
 const actCtrl = require("../controllers/actualite.controller.js");
 
 router.get("/", actCtrl.getAllActualites);
-router.get("/limit/:limit", actCtrl.getLimitedActualites);
+router.get("/limit/:type/:limit", actCtrl.getLimitedActualites);
 router.get("/:id", actCtrl.getOneActualite);
 router.post("/create", auth, actCtrl.createActualite);
 router.delete("/delete/:id", auth, actCtrl.deleteActualite);

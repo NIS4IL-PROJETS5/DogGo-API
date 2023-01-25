@@ -4,6 +4,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("../swagger_output.json");
+const fbNotification = require("./util/firebase-notifications");
 require("dotenv").config();
 const { MONGO_URI } = process.env;
 
@@ -54,4 +55,9 @@ app.use("/api/docs", require("./routes/doc.routes"));
 // swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
+fbNotification()
+  .then(() => console.log('Waiting for database events...'))
+  .catch(console.error);
+
 module.exports = app;
+
