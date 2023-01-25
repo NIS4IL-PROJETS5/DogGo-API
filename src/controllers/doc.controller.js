@@ -24,17 +24,22 @@ exports.getOneDocument = (req, res) => {
 
 exports.getDocumentStatusForUser = (req, res) => {
   util.LogInfo(`Getting document status for user '${req.params.id}'`);
+  RequiredDocs.find().then((requiredDocs) => {
   Document.find({ userId: req.params.id })
     .then((documents) => {
       if (req.auth.userId != req.params.id && req.auth.role != "admin")
       return res.status(401).json({ error: "Unauthorized" });
 
-      if(documents.length === 0) {
+      if(documents.length === 0){
         return res.status(200).json({doc_status: "0"})
       }
 
       if(documents.filter(doc => doc.status === "pending").length > 0) {
         return res.status(200).json({doc_status: "pending"})
+      }
+
+      if(documents.length !== requiredDocs.length) {
+        return res.status(200).json({doc_status: "0"})
       }
 
       if(documents.filter(doc => doc.status === "rejected").length > 0) {
@@ -48,6 +53,7 @@ exports.getDocumentStatusForUser = (req, res) => {
 
     })
     .catch((error) => res.status(404).json({ error }));
+  });
 }
 
 /* Auth check:
