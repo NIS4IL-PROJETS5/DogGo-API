@@ -18,19 +18,51 @@ exports.getAllActualites = (_req, res) => {
 /* Auth check: ❎
  */
 exports.getLimitedActualites = async (req, res) => {
-  util.LogInfo(`Getting limited actualites '${req.params.limit}'`);
+  util.LogInfo(
+    `Getting limited actualites '${req.params.type}' '${req.params.limit}'`
+  );
 
-  if (isNaN(req.params.limit)) {
+  if (isNaN(req.params.limit) || isNaN(req.params.type)) {
     return res.status(400).json({ error: "Limit must be a number" });
   }
 
-  let index = [(await Actualite.count()) - parseInt(req.params.limit) * 5]; // get the index of the first actualite
-  for (let i = 1; i < 5; i++) {
-    index.push(index[0] + i); // get the index of the next 4 actualites
+  /* Type:
+  0: all
+  1: alertes
+  2: simple
+  3: future
+  4: agility
+  */
+  if (parseInt(req.params.type) < 0 || parseInt(req.params.type > 4)) {
+    return res.status(400).json({ error: "Type must be between 0 and 4" });
+  }
+
+  let indexes = [];
+  if (parseInt(req.params.type) !== 0) {
+    await Actualite.findAll({
+      where: { actType: req.params.type },
+      order: [["actId", "DESC"]],
+    })
+      .then((data) => {
+        let actualites = [];
+        data.forEach((act) => {
+          actualites.push(act.actId);
+        });
+        indexes = actualites.slice(
+          parseInt(req.params.limit) * 5,
+          parseInt(req.params.limit) * 5 + 5
+        );
+      })
+      .catch((error) => res.status(500).json({ error }));
+  } else {
+    let index = [(await Actualite.count()) - parseInt(req.params.limit) * 5]; // get the index of the first actualite
+    for (let i = 1; i < 5; i++) {
+      indexes.push(index[0] + i); // get the index of the next 4 actualites
+    }
   }
 
   Actualite.findAll({
-    where: { actId: index },
+    where: { actId: indexes },
     order: [["actId", "DESC"]],
   })
     .then((data) => {
