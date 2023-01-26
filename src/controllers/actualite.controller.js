@@ -1,6 +1,7 @@
 const db = require("../util/mysql.connect");
 
 const Actualite = db.actualites;
+const ActualitePhoto = db.actualitesPhoto;
 const User = require("../models/User");
 
 const useUtils = require("../util/functions");
@@ -190,3 +191,38 @@ exports.updateActualite = (req, res) => {
     })
     .catch((error) => res.status(404).json({ error }));
 };
+
+/* Auth check: 
+Guest: ❎
+Member: ❎
+Admin: ✅
+*/
+exports.addImageToActualite = (req, res) => {
+  if (req.auth.role !== "admin"){
+    res.status(401).json({ error: "Unauthorized" });
+  }
+
+  util.LogInfo(`Adding image to actuality '${req.params.id}'`);
+
+  const actId = req.params.id;
+  
+  const actImg = {
+    actphoFichier : req.file.filename,
+    actId : actId,
+    actphoCommentaire : req.body.commentaire
+  };
+
+  ActualitePhoto.create(actImg)
+    .then((data) => res.status(200).json(data))
+    .catch((error) => res.status(500).json({ error }));
+}
+
+exports.getImagesForActualite = (req, res) => {
+  util.LogInfo(`Getting images for actualite '${req.params.id}'`);
+
+  const actId = req.params.id;
+
+  ActualitePhoto.findAll({where : {actId : actId}})
+    .then((data) => res.status(200).json(data))
+    .catch((error) => res.status(500).json({ error }));
+}

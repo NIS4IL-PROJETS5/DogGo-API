@@ -37,10 +37,13 @@ app.use((_req, res, next) => {
 app.use(bodyParser.json()); // parses the json data sent to the server
 
 const db = require("./util/mysql.connect"); // import the database connection
+const auth = require("./middleware/auth");
 db.sequelize.sync();
 
 app.use("/images", express.static(path.join(__dirname, "images"))); // serve the images folder statically
+app.use("/documents", auth)
 app.use("/documents", express.static(path.join(__dirname, "documents"))); // serve the documents folder statically
+
 
 // mysql routes
 app.use("/api/actualites", require("./routes/actualite.routes"));
