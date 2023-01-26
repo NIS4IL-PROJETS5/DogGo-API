@@ -218,8 +218,6 @@ exports.addImageToActualite = (req, res) => {
 }
 
 exports.getImagesForActualite = (req, res) => {
-  util.LogInfo(`Getting images for actualite '${req.params.id}'`);
-
   const actId = req.params.id;
 
   ActualitePhoto.findAll({where : {actId : actId}})

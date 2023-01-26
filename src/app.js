@@ -42,6 +42,13 @@ db.sequelize.sync();
 
 app.use("/images", express.static(path.join(__dirname, "images"))); // serve the images folder statically
 app.use("/documents", auth)
+app.use("/documents", function (req, res, next){
+  if (req.auth.role != "guest") {
+    next();
+  } else {
+    res.status(401).json({ error: "Unauthorized" });
+  }
+})
 app.use("/documents", express.static(path.join(__dirname, "documents"))); // serve the documents folder statically
 
 
