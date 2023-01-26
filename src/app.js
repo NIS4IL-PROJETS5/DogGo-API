@@ -6,7 +6,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("../swagger_output.json");
 const fbNotification = require("./util/firebase-notifications");
 require("dotenv").config();
-const { MONGO_URI } = process.env;
+const { MONGO_URI,PICTURE_FOLDER_PATH } = process.env;
 
 mongoose
   .connect(
@@ -40,7 +40,7 @@ const db = require("./util/mysql.connect"); // import the database connection
 const auth = require("./middleware/auth");
 db.sequelize.sync();
 
-app.use("/images", express.static(path.join(__dirname, "images"))); // serve the images folder statically
+app.use("/images", express.static(PICTURE_FOLDER_PATH)); // serve the images folder statically
 app.use("/documents", auth)
 app.use("/documents", function (req, res, next){
   if (req.auth.role != "guest") {
